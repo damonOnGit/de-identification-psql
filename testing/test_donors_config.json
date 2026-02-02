@@ -1,0 +1,12 @@
+{
+  "table_name": "donors",
+  "sensitive_columns": [
+    "first_name",
+    "last_name",
+    "email",
+    "phone_number",
+    "date_of_birth"
+  ],
+  "identifiers": "",
+  "method": ""
+}
