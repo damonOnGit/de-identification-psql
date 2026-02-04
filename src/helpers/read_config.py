@@ -1,17 +1,14 @@
-from typing import List, Tuple
 from psycopg2.extras import DictCursor, DictRow
 
 class Config:
   '''
-  Docstring for Config
-
   :var name: configuration name
   :var table_name: target table's name
   :var sensitive_columns: columns that are considered PII
   :var identifiers: columns that must remain as keys
-  :var method: hash | censor | scramble, dictates the stragety for deidentification
+  :var method: hash | censor | scramble, dictates the strategy for deidentification
 
-  :var columns_data: list which maps all column names to their type
+  :var columns_data: maps all column names to their type
   '''
   def __init__(self, config_db: DictRow, columns_data: dict[str, str]) -> None:
     self.name: str = config_db['configuration_name']

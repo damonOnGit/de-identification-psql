@@ -1,4 +1,17 @@
-# De-identification Project
+# Data De-identification Project
+
+## How to Run
+This project requires `python` and `postgres` installed and running.
+
+1. Create a virtual environemnt with `python -m venv`.
+2. `pip install -r requirements.txt` into your virtual env.
+3. Setup your `.env` file, it must include:
+```env
+db_uri="postgresql://<db_user>:<password>@<host>:<port>/<db_name>"
+```
+4. (optional) Run the `load_sample_data.sql` file to populate the database.
+5. Run `./main.py <configuration_name>` automatically deidentify data.
+    e.g. `./main.py donors-example-config`
 
 ### Specification
 Non-profits require can only legally hold data for a certain amount of time.
@@ -35,10 +48,18 @@ Logs all the outputs to some other audit sql table or some logs.txt
 2. ~~Configure psql connection via python, check that we can do CRUD~~
 3. ~~Reading JSON from python~~
 4. ~~Changing configuration to be stored in table~~
+4. ~~Create custom exceptions for obscuration function~~
 5. Research different deidentification methods
-6. Dynamically deidentify required columns
-7. Figure out how to log things
+5. Add additional data types to obscure
+6. ~~Dynamically deidentify required columns~~
+6. Edit obscuration function to update as a batch
+7. ~~Implement logging functionality~~
 8. Finally, create non-technical documentation and user guide.
+
+## Testing
+- Transformation of null values
+- Larger dbs
+
 
 ## Components
 
@@ -53,8 +74,10 @@ CREATE TABLE configurations (
     method VARCHAR
 );
 ```
-In the DB layer, we also have to check that these columns exist.
 
+Notes:
+- In the DB layer, we also have to check that these columns exist.
+- Identifiers must be unique, typically the primary key or something -> check that we can actually assume this?
 ### 2. De-identification Engine
 We need to know how to handle common data types:
 - primary key -> leave untouched unless specified

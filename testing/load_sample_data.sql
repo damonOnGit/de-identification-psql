@@ -1,17 +1,32 @@
+DROP TABLE IF EXISTS auto_deidentifier_logs;
 DROP TABLE IF EXISTS configurations;
 DROP TABLE IF EXISTS donors;
 DROP TABLE IF EXISTS volunteer_shifts;
 DROP TABLE IF EXISTS grant_applications;
 
 CREATE TABLE configurations (
-    configuration_name      VARCHAR(32) PRIMARY KEY,
+    configuration_name      TEXT PRIMARY KEY,
     table_name              VARCHAR NOT NULL,
     sensitive_columns       TEXT[],
     identifiers             TEXT[],
-    method                  VARCHAR(255) DEFAULT 'hash'
+    method                  VARCHAR(255) DEFAULT 'default'
 
     CONSTRAINT check_method_type
-      CHECK (method IN ('hash', 'censor', 'scramble'))
+        CHECK (method IN ('default', 'censor', 'scramble'))
+    CONSTRAINT identifiers_not_empty
+        CHECK (cardinality(identifiers) > 0)
+);
+
+CREATE TABLE auto_deidentifier_logs (
+    log_id UUID             PRIMARY KEY DEFAULT gen_random_uuid(),
+    time                    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    configuration_name      TEXT REFERENCES configurations(configuration_name),
+    table_name              TEXT,
+    type                    TEXT,
+    details                 TEXT,
+
+    CONSTRAINT check_log_type
+        CHECK (type IN ('success', 'error', 'warning'))
 );
 
 -- 1. DONOR DATABASE (High PII Density)
@@ -53,9 +68,12 @@ CREATE TABLE grant_applications (
     submission_timestamp    TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-INSERT INTO configurations (configuration_name, table_name, sensitive_columns)
+INSERT INTO configurations (configuration_name, table_name, sensitive_columns, identifiers)
 VALUES
-('donor-example-config', 'donors', ARRAY['first_name', 'last_name', 'email', 'phone_number', 'date_of_birth']);
+('donors-example-config', 'donors', ARRAY['first_name', 'last_name', 'email', 'phone_number', 'date_of_birth'], ARRAY['donor_id']),
+('bad-config-missing-table', 'not_a_table', ARRAY['first_name', 'last_name', 'email', 'phone_number', 'date_of_birth'], ARRAY['donor_id']),
+('volunteer_shifts-example-config', 'volunteer_shifts', ARRAY['volunteer_full_name', 'emergency_contact_phone'], ARRAY['shift_id']),
+('grant_applications-example-config', 'grant_applications', ARRAY['applicant_ssn_last4', 'street_address', 'postal_code', 'city'], ARRAY['app_id']);
 
 INSERT INTO donors (donor_id, first_name, last_name, email, phone_number, date_of_birth, total_donations_usd, last_contact_date, opt_in_newsletter)
 VALUES
