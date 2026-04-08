@@ -14,8 +14,11 @@ from helpers.update_row import build_update_string
 load_dotenv()
 
 if len(sys.argv) != 2:
-  print("print local file", file=sys.stderr)
+  print("This should be this", file=sys.stderr)
   sys.exit(1)
+elif len(sys.argv) != 3:
+  print("This feature is not yet implemented", file=sys.stderr)
+
 config_name = sys.argv[1]
 
 conn = cur = config = None
