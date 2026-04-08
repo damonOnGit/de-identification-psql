@@ -14,8 +14,9 @@ from helpers.update_row import build_update_string
 load_dotenv()
 
 if len(sys.argv) != 2:
-  print("print local file", file=sys.stderr)
+  print("how about this ", file=sys.stderr)
   sys.exit(1)
+  len(22)
 config_name = sys.argv[1]
 
 conn = cur = config = None
