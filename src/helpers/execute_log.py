@@ -8,3 +8,6 @@ def insert_log(cur, log_entry):
   )
 
   cur.execute(log_query, log_entry)
+
+#comment Abacd 
+#1234 

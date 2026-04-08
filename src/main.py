@@ -14,7 +14,7 @@ from helpers.update_row import build_update_string
 load_dotenv()
 
 if len(sys.argv) != 2:
-  print("Usage: ./main.py <config_name>", file=sys.stderr)
+  print("print local file", file=sys.stderr)
   sys.exit(1)
 config_name = sys.argv[1]
 
